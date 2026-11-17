@@ -1,0 +1,79 @@
+{
+  "network": "xlayer-fork",
+  "rpc": "local hardhat fork of X Layer mainnet",
+  "startedAt": "2026-11-17T10:09:29.916Z",
+  "steps": [
+    {
+      "step": "loaded circuits from X Layer",
+      "at": "2026-11-17T10:09:29.975Z",
+      "target": "0x87BFCa3494Aa228fF589ab9B642143A5e8c8F9a6:3522",
+      "spec": "0x60918C204F3c94630D3D793738Fc36293c8405D6:1010",
+      "pins": "2→1",
+      "targetHash": "0xdb92c1cdb2817a339f53ef0d7e821d5597c0d69f3e2c316d6df68c786e27df52",
+      "specHash": "0xc738359c3dde133a010e00bbc3dc1bd8685e3028a04e5df6e0f00cffa2ce2524"
+    },
+    {
+      "step": "simulator matches processor eval",
+      "at": "2026-11-17T10:09:30.147Z",
+      "vectors": 8
+    },
+    {
+      "step": "solver found a counterexample, confirmed by eval",
+      "at": "2026-11-17T10:09:30.168Z",
+      "input": "0x00",
+      "targetOut": "0x00",
+      "specOut": "0x01",
+      "solverMs": 0,
+      "cnf": {
+        "vars": 4,
+        "clauses": 4,
+        "nands": 1,
+        "differingOutputs": 1
+      }
+    },
+    {
+      "step": "deployed MiterCourt",
+      "at": "2026-11-17T10:09:34.349Z",
+      "court": "0xac5613168100bf4d4ee53ec7d5fc90fb43f0463b",
+      "tx": "0xe81b0b987363401ef3ace13c54d7a051037a59b47a466aabe6a1f1b482320bfa",
+      "gasUsed": "1772547"
+    },
+    {
+      "step": "opened bounty",
+      "at": "2026-11-17T10:09:40.970Z",
+      "bountyId": "1",
+      "stake": "1",
+      "tx": "0x95638844e0639c121ea884a0b3ea65470edbdfc6e154ad78cd8d38f6cf1a5d08",
+      "gasUsed": "262911"
+    },
+    {
+      "step": "committed",
+      "at": "2026-11-17T10:09:41.359Z",
+      "commitment": "0x9f4d5c2b7fb4809846ebe4280575c7b7f01c0fb836cec53a220cb9fad9fcba26",
+      "tx": "0x771215f5178571beeda38d6af7627e122ad50ebbe5262c9aa21bc1395b7a28f1",
+      "block": "76141250"
+    },
+    {
+      "step": "revealed: contract re-ran both circuits and paid",
+      "at": "2026-11-17T10:09:46.289Z",
+      "tx": "0x6a697798af1a21cd8e3cbbc2ce13ddfa6ca52ecc6c49fc3c4cb931c4d816074d",
+      "block": "76141252",
+      "gasUsed": "219326",
+      "paid": "0.95",
+      "fee": "0.05",
+      "targetOutOnChain": "0x00",
+      "specOutOnChain": "0x01",
+      "hunterNetGain": "0.949780673998464718"
+    },
+    {
+      "step": "verified on-chain status",
+      "at": "2026-11-17T10:09:46.332Z",
+      "state": "Paid",
+      "brokenAgainstSpecBy": "1",
+      "bondedRemaining": "0"
+    }
+  ],
+  "court": "0xac5613168100bf4d4ee53ec7d5fc90fb43f0463b",
+  "finishedAt": "2026-11-17T10:09:46.332Z",
+  "ok": true
+}
