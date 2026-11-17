@@ -26,6 +26,8 @@ contract MiterCourt {
         uint40 expiry;
         State state;
         address hunter;
+        uint64 openedBlock; // lets clients fetch events at an exact block (public RPCs cap log ranges)
+        uint64 settledBlock; // block of claim, void or withdrawal
     }
 
     ITapeOutFactory public immutable factory;
@@ -133,6 +135,7 @@ contract MiterCourt {
         b.nOut = nOut;
         b.expiry = expiry;
         b.state = State.Open;
+        b.openedBlock = uint64(block.number);
         bondedOf[circuitKey(target, targetId)] += msg.value;
         _emitOpened(id, b);
     }
@@ -164,6 +167,7 @@ contract MiterCourt {
         if (!expired && b.state != State.Voided) revert NotWithdrawable();
         if (expired) bondedOf[circuitKey(b.target, b.targetId)] -= b.amount;
         b.state = State.Withdrawn;
+        b.settledBlock = uint64(block.number);
         uint256 amount = b.amount;
         emit Withdrawn(id, msg.sender, amount);
         _send(msg.sender, amount);
@@ -209,6 +213,7 @@ contract MiterCourt {
         bytes32 sNow = netlistHash(b.spec, b.specId);
         if (tNow == b.targetHash && sNow == b.specHash) return false;
         b.state = State.Voided;
+        b.settledBlock = uint64(block.number);
         bondedOf[circuitKey(b.target, b.targetId)] -= b.amount;
         emit Voided(id, tNow, sNow);
         return true;
@@ -221,6 +226,7 @@ contract MiterCourt {
         uint256 fee = (amount * feeBps) / 10_000;
         b.state = State.Paid;
         b.hunter = msg.sender;
+        b.settledBlock = uint64(block.number);
         counterexampleOf[id] = input;
         bondedOf[circuitKey(b.target, b.targetId)] -= amount;
         bytes32 pk = pairKey(b.target, b.targetId, b.spec, b.specId);

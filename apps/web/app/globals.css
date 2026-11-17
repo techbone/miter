@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens: see AGENTS.md. RGB triplets so Tailwind can apply alpha. */
+:root {
+  --bg: 250 250 248;
+  --surface: 255 255 255;
+  --surface-2: 243 242 239;
+  --border: 228 226 221;
+  --text: 20 20 20;
+  --muted: 107 106 102;
+  --accent: 180 86 31;
+  --broken: 201 58 58;
+  --proven: 44 138 95;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: 11 12 14;
+    --surface: 18 19 23;
+    --surface-2: 25 26 31;
+    --border: 36 38 44;
+    --text: 232 233 235;
+    --muted: 139 144 153;
+    --accent: 224 119 58;
+    --broken: 240 99 99;
+    --proven: 76 195 138;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: 11 12 14;
+  --surface: 18 19 23;
+  --surface-2: 25 26 31;
+  --border: 36 38 44;
+  --text: 232 233 235;
+  --muted: 139 144 153;
+  --accent: 224 119 58;
+  --broken: 240 99 99;
+  --proven: 76 195 138;
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono,
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.25);
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-line bg-surface;
+  }
+  .btn {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-ctl px-3 text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-fg text-bg hover:bg-fg/85;
+  }
+  .btn-accent {
+    @apply btn bg-accent text-white hover:bg-accent/90;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface text-fg hover:bg-surface-2;
+  }
+  .input {
+    @apply h-8 w-full rounded-ctl border border-line bg-surface px-2.5 font-mono text-sm text-fg outline-none placeholder:text-muted/70 focus:border-fg/40;
+  }
+  .label {
+    @apply text-sm text-muted;
+  }
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.08em] text-muted;
+  }
+}
