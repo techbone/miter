@@ -1,0 +1,141 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ITapeOutProcessor",
+  "sourceName": "contracts/ITapeOut.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "circuitInfo",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "nIn",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "nOut",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "nState",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint32",
+          "name": "gateCount",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "inputs",
+          "type": "bytes"
+        }
+      ],
+      "name": "eval",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "netlist",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "state",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "inputs",
+          "type": "bytes"
+        }
+      ],
+      "name": "step",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "newState",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "outputs",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
