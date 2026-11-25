@@ -89,11 +89,14 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    networkStats().then(setStats).catch(() => setStats(null));
+    // Bounties first: both calls share one batched RPC queue, and the stats scan is ~900 reads.
     listBounties()
       .then(setRows)
       .catch((e) => setError(e?.shortMessage ?? e?.message))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        networkStats().then(setStats).catch(() => setStats(null));
+      });
   }, []);
 
   const now = Date.now() / 1000;
