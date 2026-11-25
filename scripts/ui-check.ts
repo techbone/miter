@@ -89,7 +89,7 @@ const openTx = await rpc('eth_sendTransaction', [{
   data: encodeFunctionData({ abi, functionName: 'open', args: ['0x87BFCa3494Aa228fF589ab9B642143A5e8c8F9a6', 3522n, '0x60918C204F3c94630D3D793738Fc36293c8405D6', 1010n, Number(block.timestamp) + 72 * 3600] }),
 }]);
 while (!(await rpc('eth_getTransactionReceipt', [openTx]))) await new Promise((r) => setTimeout(r, 500));
-const count = BigInt(await rpc('eth_call', [{ to: seed.court, data: encodeFunctionData({ abi, functionName: 'bountyCount' }) }, 'latest']));
+const count = BigInt(await rpc('eth_call', [{ to: seed.court, data: encodeFunctionData({ abi, functionName: 'bountyCount', args: [] }) }, 'latest']));
 step(`opened fresh bounty #${count}`);
 {
   const p = await page('dark');

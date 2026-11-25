@@ -3,7 +3,9 @@
  * the web app uses. Every circuit evaluation is a real TapeOut processor.
  *
  *   Fork (free):    pnpm e2e                      (expects `hardhat node` on :8545)
- *   Mainnet:        pnpm e2e --mainnet --broadcast (uses DEPLOYER/HUNTER keys from .env)
+ *   Mainnet:        pnpm e2e --mainnet --broadcast (DEPLOYER key from .env; a fresh HUNTER key
+ *                   is generated into .env and funded with 0.001 OKB if missing; the deployed
+ *                   court address is saved to .env as MITER_COURT_ADDRESS so reruns reuse it)
  *
  * Steps: load target + spec from chain → simulator vs eval trust check → MiniSat
  * miter → eval cross-check → open bounty → commit → reveal → verify Claimed event,
@@ -105,6 +107,18 @@ step('solver found a counterexample, confirmed by eval', { input, targetOut: byt
 if (MAINNET && !BROADCAST) process.exit(0);
 
 // 4. accounts + court
+const envPath = resolvePath(root, '.env');
+const setEnv = (key: string, value: string) => {
+  // Mainnet only: persist generated values so a rerun reuses them. .env is git-ignored.
+  const src = existsSync(envPath) ? readFileSync(envPath, 'utf8') : '';
+  const re = new RegExp(`^${key}=.*$`, 'm');
+  writeFileSync(envPath, re.test(src) ? src.replace(re, `${key}=${value}`) : `${src.replace(/\n?$/, '\n')}${key}=${value}\n`, { mode: 0o600 });
+  process.env[key] = value;
+};
+if (MAINNET && !/^0x[0-9a-fA-F]{64}$/.test(process.env.HUNTER_PRIVATE_KEY ?? '')) {
+  setEnv('HUNTER_PRIVATE_KEY', generatePrivateKey());
+  console.log('Generated a fresh hunter key in .env');
+}
 const funder = await fundedAccount('DEPLOYER_PRIVATE_KEY');
 const hunter = await fundedAccount('HUNTER_PRIVATE_KEY');
 const wf = createWalletClient({ account: funder, chain, transport: http(RPC) });
@@ -115,12 +129,25 @@ const wait = async (hash: Hex) => {
   return r;
 };
 
-let court = (opt('court', process.env.MITER_COURT_ADDRESS ?? '') || undefined) as Hex | undefined;
+if (MAINNET) {
+  const HUNTER_GAS = parseEther('0.001');
+  const [fBal, hBal] = await Promise.all([pub.getBalance({ address: funder.address }), pub.getBalance({ address: hunter.address })]);
+  const needed = STAKE + (hBal < HUNTER_GAS / 2n ? HUNTER_GAS : 0n) + parseEther('0.0002');
+  if (fBal < needed) throw new Error(`deployer ${funder.address} has ${formatEther(fBal)} OKB, needs about ${formatEther(needed)}`);
+  if (hBal < HUNTER_GAS / 2n) {
+    const tx = await wf.sendTransaction({ to: hunter.address, value: HUNTER_GAS });
+    await wait(tx);
+    step('funded hunter for gas', { hunter: hunter.address, amount: formatEther(HUNTER_GAS), tx });
+  }
+}
+
+let court = (opt('court', MAINNET ? process.env.MITER_COURT_ADDRESS ?? '' : '') || undefined) as Hex | undefined;
 if (!court) {
   const hash = await wf.deployContract({ abi, bytecode: artifact.bytecode as Hex, args: ['0x1f09DAeFA827f02CBb40967cc91b259763760761', funder.address, 500] });
   const r = await wait(hash);
   court = r.contractAddress!;
   step('deployed MiterCourt', { court, tx: hash, gasUsed: r.gasUsed });
+  if (MAINNET) setEnv('MITER_COURT_ADDRESS', court);
 }
 log.court = court;
 
@@ -171,3 +198,4 @@ mkdirSync(resolvePath(root, 'docs/evidence'), { recursive: true });
 const out = resolvePath(root, `docs/evidence/e2e-${log.network}-${Date.now()}.json`);
 writeFileSync(out, JSON.stringify(log, (_, v) => (typeof v === 'bigint' ? v.toString() : v), 2));
 console.log(`\nE2E PASSED · evidence: ${out.replace(root + '/', '')}`);
+if (MAINNET) console.log(`\nVercel env:\n  NEXT_PUBLIC_MITER_COURT_ADDRESS=${court}\n  NEXT_PUBLIC_XLAYER_RPC_URL=${RPC}`);
